@@ -2,9 +2,7 @@ package ru.ifmo.ctddev.katunina.Main;
 
 import java.math.BigInteger;
 
-/**
- * Created by Sergey.
- */
+
 public abstract class ConstFactory<T> {
 
     public abstract Const<T> makeConst(String s, int pos);
@@ -45,11 +43,8 @@ class DoubleConstFactory extends ConstFactory<Double> {
     @Override
     public Const<Double> makeConst(String s, int pos) {
         int initialPos = pos;
-        if (s.charAt(pos) == '-') {
+        if (s.charAt(pos) == '-')
             ++pos;
-            if (pos < s.length() && !Character.isDigit(s.charAt(pos)))
-                return null;
-        }
         boolean point = false;
         while (pos < s.length()) {
             if (Character.isDigit(s.charAt(pos)))
@@ -64,7 +59,7 @@ class DoubleConstFactory extends ConstFactory<Double> {
             else
                 break;
         }
-        if (pos == initialPos)
+        if (pos == initialPos || pos-initialPos==1 && (s.charAt(pos)=='-' || s.charAt(pos)=='.'))
             return null;
         lastConstLength = pos - initialPos;
         return new Const<Double>(Double.parseDouble(s.substring(initialPos, pos)));

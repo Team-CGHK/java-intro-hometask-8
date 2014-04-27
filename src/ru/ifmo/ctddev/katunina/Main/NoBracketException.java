@@ -1,12 +1,5 @@
 package ru.ifmo.ctddev.katunina.Main;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Евгения
- * Date: 14.04.14
- * Time: 23:54
- * To change this template use File | Settings | File Templates.
- */
 public class NoBracketException extends ParsingException {
     // String wrong_index;
    // boolean closingBracketsNotEnough;

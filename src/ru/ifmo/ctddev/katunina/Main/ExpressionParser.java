@@ -2,13 +2,7 @@ package ru.ifmo.ctddev.katunina.Main;
 
 import java.util.HashMap;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Евгения
- * Date: 31.03.14
- * Time: 23:46
- * To change this template use File | Settings | File Templates.
- */
+
 public class ExpressionParser<T> {
     private String source;
     private int currentIndex = -1;
@@ -67,7 +61,13 @@ public class ExpressionParser<T> {
                 if (multiplier == null)
                     throw new IncorrectPositionException(source, currentIndex);
                 left = new BinaryOperation<T>(left, multiplier, arithmetics.get("mod"));
-            } else {
+            } else if (tryConsume("abs")) {
+                Expression3 multiplier = multiplier(true);
+                if (multiplier == null)
+                    throw new IncorrectPositionException(source, currentIndex);
+                left = new BinaryOperation<T>(multiplier,null, arithmetics.get("abs"));
+            }
+            else {
                 Expression3 m = multiplier(false);
                 if (m != null)
                     left = new BinaryOperation<T>(left, m, arithmetics.get("*"));
@@ -84,7 +84,7 @@ public class ExpressionParser<T> {
             return new Variable(Character.toString(source.charAt(currentIndex)));
         }
         else if (unaryOperationsAllowed && tryConsume("-"))
-            return new BinaryOperation<T>(new Const<T>(constFactory.getNeutral()), multiplier(true), arithmetics.get("+"));
+            return new BinaryOperation<T>(new Const<T>(constFactory.getNeutral()), multiplier(true), arithmetics.get("-"));
         else if (tryConsume("(")) {
             Expression3 aux = expression(true);
             boolean closingFound = tryConsume(")");
