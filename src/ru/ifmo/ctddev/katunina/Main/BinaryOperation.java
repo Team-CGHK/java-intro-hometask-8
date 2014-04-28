@@ -15,7 +15,15 @@ public class BinaryOperation<T> implements Expression3<T> {
     @Override
     public T evaluate(T x, T y, T z) {
         T a = leftOperand.evaluate(x, y, z),
-          b = rightOperand==null? null: rightOperand.evaluate(x, y, z);
+                b = rightOperand == null ? null : rightOperand.evaluate(x, y, z);
         return calculator.calculate(a, b);
+    }
+
+    @Override
+    public String toString() {
+        if ("abs".equals(calculator.getSign()))
+            return "abs(" + leftOperand.toString() + ")";
+        String format = ("+".equals(calculator.getSign()) || "-".equals(calculator.getSign())) ? "%s" : "(%s)";
+        return String.format(format, leftOperand.toString()) + " " + calculator.getSign() + " " + String.format("-".equals(calculator.getSign()) ? "(%s)" : format, rightOperand.toString());
     }
 }

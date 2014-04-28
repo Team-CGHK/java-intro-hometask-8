@@ -74,7 +74,7 @@ public class GenericParseTest {
         }
     }
 
-    static boolean checkTest(Test test){
+    static boolean checkTest(Test test) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         String sType = new String[]{"-i", "-d", "-bi"}[test.type];
@@ -121,7 +121,7 @@ public class GenericParseTest {
                         return false;
                     }
                     if ((Integer) ans[i][j] != x) {
-                        System.err.println(String.format("expected %d, found %d, x = %d, y = %d, on test:", (Integer) ans[i][j], x, xValue, yValue));
+                        System.err.println(String.format("expected %s, found %d, x = %d, y = %d, on test:", ans[i][j], x, xValue, yValue));
                         System.err.println(sType + " " + test.expr);
                         return false;
                     }
@@ -140,20 +140,18 @@ public class GenericParseTest {
                     if (value == x) {
                         bad = false;
                     } else if (Double.isNaN(value)) {
-                        if (Double.isNaN(x)) {
+                        if (x != value) {
                             bad = false;
                         }
                     } else if (Double.isInfinite(value)) {
                         if (x != value) {
                             bad = false;
                         }
-                    } else if (Double.isNaN(x) || Double.isNaN(value)) {
-
                     } else if (Math.abs(x - value) / Math.max(1., Math.abs(x)) < 1e-4) {
                         bad = false;
                     }
                     if (bad) {
-                        System.err.println(String.format("expected %f, found %f, x = %d, y = %d, on test:", (Double) ans[i][j], x, xValue, yValue));
+                        System.err.println(String.format("expected %s, found %f, x = %d, y = %d, on test:", ans[i][j], x, xValue, yValue));
                         System.err.println(sType + " " + test.expr);
                         return false;
                     }
@@ -168,7 +166,7 @@ public class GenericParseTest {
                         return false;
                     }
                     if (!ans[i][j].equals(x)) {
-                        System.err.println(String.format("expected %d, found %d, x = %d, y = %d, on test:", (BigInteger) ans[i][j], x, xValue, yValue));
+                        System.err.println(String.format("expected %s, found %d, x = %d, y = %d, on test:", ans[i][j], x, xValue, yValue));
                         System.err.println(sType + " " + test.expr);
                         return false;
                     }

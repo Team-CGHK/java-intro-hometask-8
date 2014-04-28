@@ -5,7 +5,7 @@ import java.math.BigInteger;
 
 public abstract class ConstFactory<T> {
 
-    public abstract Const<T> makeConst(String s, int pos);
+    public abstract Const<T> makeConst(String s, int pos, boolean negativeAllowed);
 
     public abstract T getNeutral();
 
@@ -15,12 +15,13 @@ public abstract class ConstFactory<T> {
 class IntegerConstFactory extends ConstFactory<Integer> {
 
     @Override
-    public Const<Integer> makeConst(String s, int pos) {
+    public Const<Integer> makeConst(String s, int pos, boolean negativeAllowed) {
         int initialPos = pos;
         if (s.charAt(pos) == '-') {
             ++pos;
             if (pos < s.length() && !Character.isDigit(s.charAt(pos)))
                 return null;
+            if (!negativeAllowed) return null;
         }
 
         while (pos < s.length() && Character.isDigit(s.charAt(pos)))
@@ -41,25 +42,36 @@ class IntegerConstFactory extends ConstFactory<Integer> {
 class DoubleConstFactory extends ConstFactory<Double> {
 
     @Override
-    public Const<Double> makeConst(String s, int pos) {
+    public Const<Double> makeConst(String s, int pos, boolean negativeAllowed) {
         int initialPos = pos;
-        if (s.charAt(pos) == '-')
+        if (s.charAt(pos) == '-') {
             ++pos;
-        boolean point = false;
+            if (pos < s.length() && !Character.isDigit(s.charAt(pos)))
+                return null;
+            if (!negativeAllowed) return null;
+        }
+        boolean point = false,
+                E = false;
         while (pos < s.length()) {
             if (Character.isDigit(s.charAt(pos)))
                 pos++;
-            else if (s.charAt(pos) == '.')
+            else if (s.charAt(pos) == '.' && !E)
                 if (!point) {
                     point = true;
                     pos++;
-                } else {
-                    return null;
-                }
+                } else return null;
+            else if (s.charAt(pos) == 'E')
+                if (!E) {
+                    E = true;
+                    ++pos;
+                    if (s.charAt(pos) == '-')
+                        ++pos;
+                } else return null;
+
             else
                 break;
         }
-        if (pos == initialPos || pos-initialPos==1 && (s.charAt(pos)=='-' || s.charAt(pos)=='.'))
+        if (pos == initialPos || pos < s.length() && s.charAt(pos) == '.')
             return null;
         lastConstLength = pos - initialPos;
         return new Const<Double>(Double.parseDouble(s.substring(initialPos, pos)));
@@ -74,12 +86,13 @@ class DoubleConstFactory extends ConstFactory<Double> {
 class BigIntegerConstFactory extends ConstFactory<BigInteger> {
 
     @Override
-    public Const<BigInteger> makeConst(String s, int pos) {
+    public Const<BigInteger> makeConst(String s, int pos, boolean negativeAllowed) {
         int initialPos = pos;
         if (pos < s.length() && s.charAt(pos) == '-') {
             ++pos;
             if (pos < s.length() && !Character.isDigit(s.charAt(pos)))
                 return null;
+            if (!negativeAllowed) return null;
         }
         while (pos < s.length() && Character.isDigit(s.charAt(pos)))
             pos++;

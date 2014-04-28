@@ -11,4 +11,9 @@ public class Const<T> implements Expression3<T> {
     public T evaluate(T x, T y, T z) {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }
